@@ -17,7 +17,6 @@ export class NotesController {
     @Get()
     findAll(@User() user?: any) {
       let u = this.userService.getUserId(user);
-      console.log('u',u)
       return this.notesService.findAll(u);
     }
   

@@ -15,17 +15,7 @@ export class CompaniesController {
 
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto) {
-    console.log('aaabbb')
     return this.companiesService.create(createCompanyDto);
-  }
-
-  // @Roles(UserRole.SUPERUSER)
-  // @UseGuards(RolesGuard)
-  @Get()
-  findAll(@User() user: any) {
-    let u = this.userService.getUserId(user);
-    console.log(u,'uu')
-    return this.companiesService.findAll();
   }
 
   @Get(':id')

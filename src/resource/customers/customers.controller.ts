@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { User } from '../users/users.decorator';
 import { UsersService } from '../users/users.service';
+import { Role } from 'src/auth/enums/roles.enum';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+
 
 @Controller('customers')
 export class CustomersController {
@@ -14,10 +18,11 @@ export class CustomersController {
     return this.customersService.create(createCustomerDto);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @Get()
   findAll(@User() user?: any) {
     let u = this.userService.getUserId(user);
-    console.log('u',u)
     return this.customersService.findAll(u);
   }
 

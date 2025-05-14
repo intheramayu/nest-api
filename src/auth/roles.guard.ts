@@ -1,20 +1,38 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+// roles.guard.ts
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from 'src/resource/users/entities/user.entity';
+import { ROLES_KEY } from './roles.decorator';
+import { Role } from './enums/roles.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.get<UserRole[]>('roles', context.getHandler());
-    console.log(requiredRoles);
-    if (!requiredRoles) {
-      return true;
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true; // No roles required
     }
-    const request = context.switchToHttp().getRequest();
-    const user = request.user; // assume request.user is set from a previous auth middleware
-    console.log(user);
-    return requiredRoles.some((role) => user.role.includes(role));
+
+    const { user } = context.switchToHttp().getRequest();
+
+    if (!user || !user.role) {
+      throw new ForbiddenException('User role not found');
+    }
+
+    if (!requiredRoles.includes(user.role)) {
+      throw new ForbiddenException('Access denied!');
+    }
+
+    return true;
   }
 }

@@ -23,7 +23,7 @@ export class NoteImage {
     @Column({ name: 'path' })
     path: string;
 
-    @Column('decimal', { precision: 6, scale: 2 })
+    @Column('decimal', { precision: 10, scale: 2 })
     file_size: number;
     
     @Column({ name: 'extension' })
@@ -46,8 +46,4 @@ export class NoteImage {
 
     @Column({ name: 'updated_by', nullable: true,  })
     updated_by: string;
-
-    @OneToOne(() => Note)
-    @JoinColumn({name: 'note_id', referencedColumnName: 'id'})
-    note: Note
 }

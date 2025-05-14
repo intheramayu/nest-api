@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { NoteImagesService } from './note_images.service';
 import { CreateNoteImageDto } from './dto/create-note_image.dto';
 import { UpdateNoteImageDto } from './dto/update-note_image.dto';
 import { User } from '../users/users.decorator';
 import { UsersService } from '../users/users.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('note-images')
 export class NoteImagesController {
@@ -36,5 +37,19 @@ export class NoteImagesController {
       remove(@Param('id') id: string, @Body() updateNoteImageDto: UpdateNoteImageDto, @User() user?: any) {
         let profile = this.userService.getUserId(user);
         return this.NoteImagesService.remove(id, updateNoteImageDto, profile);
+      }
+
+      @Post('upload/:note_id/:id')
+      @UseInterceptors(FileInterceptor('file'))
+      uploadFile(@UploadedFile() file: Express.Multer.File, 
+      @Param('note_id') note_id: string,
+      @Param('id') id: string) {
+        return this.NoteImagesService.handleFileUpload(file, note_id, id);
+      }
+
+      @Post('upload/:note_id')
+      @UseInterceptors(FileInterceptor('file'))
+      uploadFileUpdate(@UploadedFile() file: Express.Multer.File, @Param('note_id') note_id: string) {
+        return this.NoteImagesService.handleFileUpload(file, note_id);
       }
 }

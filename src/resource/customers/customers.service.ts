@@ -16,12 +16,20 @@ export class CustomersService {
   
     create(createCustomerDto: CreateCustomerDto) {
       const newCustomer = this.customerRepository.create(createCustomerDto);
-      return this.customerRepository.save(newCustomer)
+      return {
+        status: "success",
+        message: "Date created successfully",
+        data: this.customerRepository.save(newCustomer)
+      }
     }
   
-    findAll(user: any = null) {
-      console.log('uuuu', user)
-      return this.customerRepository.find();
+    async findAll(user: any = null) {
+      const data = await this.customerRepository.find();
+      return {
+        status: "success",
+        message: "Data fetch successfully",
+        data: data
+      }
     }
   
     async findOne(id: string, user: any = null) {
@@ -32,7 +40,11 @@ export class CustomersService {
       const Customer = await this.findOne(id);
       const userId = user.user.id;
       this.customerRepository.merge(Customer!, {...updateCustomerDto, updated_by: userId})
-      return this.customerRepository.save(Customer!);
+      return {
+        status: "success",
+        message: "Data updated successfully",
+        data: this.customerRepository.save(Customer!)
+      }
     }
   
     async remove(id: string, updateCustomerDto: UpdateCustomerDto, user: any = null) {
@@ -41,6 +53,10 @@ export class CustomersService {
       const updatedCustomer = this.customerRepository.merge(Customer!, 
         {deleted_at : moment().format('YYYY-MM-DD hh:mm:ss'), deleted_by: userId}); 
   
-      return this.customerRepository.save({...updatedCustomer, ...updateCustomerDto});
+      return {
+        status: "success",
+        message: "Data remove successfully",
+        data: this.customerRepository.save({...updatedCustomer, ...updateCustomerDto})
+      }
     }
 }

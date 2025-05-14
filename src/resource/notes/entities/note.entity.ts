@@ -1,7 +1,8 @@
 // src/resources/users/entities/user.entity.ts
 import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToOne, 
-    JoinColumn, ManyToOne } from 'typeorm';
+    JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Customer } from 'src/resource/customers/entities/customer.entity';
+import { NoteImage } from 'src/resource/note_images/entities/note_image.entity';
 
 @Entity()
 export class Note {
@@ -41,4 +42,7 @@ export class Note {
     @ManyToOne(type => Customer)
     @JoinColumn({name: 'customer_id', referencedColumnName: 'id'})
     customer: Customer;
+
+    @OneToMany(() => NoteImage, (noteImage) => noteImage.note_id)
+    noteImages: NoteImage[];
 }

@@ -31,6 +31,15 @@
 $ npm install
 ```
 
+## Database Migration
+
+Create Database and setup environtment to connect database.
+
+then 
+```bash
+$ npm run migration:run
+```
+
 ## Compile and run the project
 
 ```bash
