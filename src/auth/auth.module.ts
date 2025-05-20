@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/resource/users/users.module';
@@ -14,7 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: '30d' },
     }),
   ],
   providers: [
@@ -22,7 +21,7 @@ import { APP_GUARD } from '@nestjs/core';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    }
+    },
   ],
   controllers: [AuthController],
   exports: [AuthService],

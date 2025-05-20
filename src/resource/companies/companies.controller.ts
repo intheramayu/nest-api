@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
@@ -11,7 +21,10 @@ import { UsersService } from '../users/users.service';
 
 @Controller('companies')
 export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService, private readonly userService: UsersService) {}
+  constructor(
+    private readonly companiesService: CompaniesService,
+    private readonly userService: UsersService,
+  ) {}
 
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto) {
@@ -23,18 +36,27 @@ export class CompaniesController {
     return this.companiesService.findOne(id);
   }
 
+  @Get()
+  findAll() {
+    return this.companiesService.findAll();
+  }
+
+  @Get('user/:id')
+  findAllByUserId(@Param('id') id: string) {
+    return this.companiesService.findAllByUserId(id);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companiesService.update(id, updateCompanyDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @User() user: any,
+  ) {
+    return this.companiesService.update(id, updateCompanyDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companiesService.remove(id, updateCompanyDto);
-  }
-
-  @Get()
-  getUser(@User() user: any) {
-    return this.userService.getUserId(user);
+  remove(@Param('id') id: string, @User() user: any) {
+    return this.companiesService.remove(id, user);
   }
 }
